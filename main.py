@@ -57,7 +57,6 @@ def error_reduction_pruning(clf, X_test, y_test):
                         clf2.tree_.__setstate__(temp_structure)
     clf.tree_.__setstate__(temp_structure)
     return clf
-
     
 if __name__=="__main__":
     #load data
@@ -71,22 +70,29 @@ if __name__=="__main__":
     X_train, X_test, Y_train, Y_test = train_test_split(X_abalone_scaled, Y_abalone, test_size = .2)
     X_train, X_prune, Y_train, Y_prune = train_test_split(X_train, Y_train, test_size = .25)
     
-    #evaluate pruning in Decision Tree with Abalone
-    dt = DTC()
-    dt.fit(X_train, Y_train)
-    training_score = dt.score(X_train, Y_train)
-    testing_score = dt.score(X_test, Y_test)
+    training_sizes = [i for i in range(10,110,10)]
+    for ts in training_sizes:
+        print(int(ts/100 * X_train.shape[0]))
+        X_batch = X_train[:int(ts/100 * X_train.shape[0])]
+        Y_batch = Y_train[:int(ts/100 * Y_train.shape[0])]
     
-    dt = error_reduction_pruning(dt, X_prune, Y_prune)
-    post_pruning_score = dt.score(X_test, Y_test)
-    print(training_score, testing_score, post_pruning_score)
+        #evaluate pruning in Decision Tree with Abalone
+        dt = DTC()
+        dt.fit(X_batch, Y_batch)
+        training_score = dt.score(X_batch, Y_batch)
+        testing_score = dt.score(X_test, Y_test)
+        
+        dt = error_reduction_pruning(dt, X_prune, Y_prune)
+        post_pruning_score = dt.score(X_test, Y_test)
+        print(ts, training_score, testing_score, post_pruning_score)
+        
+        #evaluate pruning in Decision Tree with Wine
+        dt = DTC()
+        dt.fit(X_batch, Y_batch)
+        training_score = dt.score(X_batch, Y_batch)
+        testing_score = dt.score(X_test, Y_test)
     
-    #evaluate pruning in Decision Tree with Wine
-    dt = DTC()
-    dt.fit(X_train, Y_train)
-    training_score = dt.score(X_train, Y_train)
-    testing_score = dt.score(X_test, Y_test)
-    
-    dt = error_reduction_pruning(dt, X_prune, Y_prune)
-    post_pruning_score = dt.score(X_test, Y_test)
-    print(training_score, testing_score, post_pruning_score)
+        dt = error_reduction_pruning(dt, X_prune, Y_prune)
+        post_pruning_score = dt.score(X_test, Y_test)
+        print(ts, training_score, testing_score, post_pruning_score)
+        print
