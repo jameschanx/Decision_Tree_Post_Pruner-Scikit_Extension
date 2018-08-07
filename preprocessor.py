@@ -4,7 +4,7 @@
 
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import scale
+#from sklearn.preprocessing import scale
 import matplotlib.pyplot as plt
 
 #***********************Dataset 1 - Wine***************************
