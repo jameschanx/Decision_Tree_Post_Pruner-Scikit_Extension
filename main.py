@@ -58,30 +58,18 @@ def error_reduction_pruning(clf, X_test, y_test):
     clf.tree_.__setstate__(temp_structure)
     return clf
     
-if __name__=="__main__":
-    #load data
-    X_abalone = pd.read_hdf('X_abalone.hdf')
-    X_abalone_scaled = scale(X_abalone)
-    Y_abalone = pd.read_hdf('y_abalone.hdf')
-    X_wine = pd.read_hdf('X_wine.hdf')
-    X_wine_scaled = scale(X_wine)
-    Y_wine = pd.read_hdf('y_wine.hdf')
+def evaluate_pruner(X, y, title):
+    test_scores = []
+    pruned_scores = []
     
-    abalone_test_scores = []
-    abalone_pruned_scores = []
-    wine_test_scores = []
-    wine_pruned_scores = []
-    training_sizes = [i for i in range(1,105,15)]
+    training_sizes = [i for i in range(10,101)]
     for ts in training_sizes:
         print(ts)
-        abalone_acc = []
-        abalone_acc_pruned = []
-        wine_acc = []
-        wine_acc_pruned = []
-        #average of 5 trials
-        for i in range(10):
-            print('----',i)
-            X_train, X_test, Y_train, Y_test = train_test_split(X_abalone_scaled, Y_abalone, test_size = .2)
+        acc = []
+        acc_pruned = []
+        #average of n trials
+        for i in range(32):
+            X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size = .2)
             X_train, X_prune, Y_train, Y_prune = train_test_split(X_train, Y_train, test_size = .25)
             X_batch = X_train[:int(ts/100 * X_train.shape[0])]
             Y_batch = Y_train[:int(ts/100 * Y_train.shape[0])]    
@@ -92,29 +80,45 @@ if __name__=="__main__":
             testing_score = dt.score(X_test, Y_test)
             dt = error_reduction_pruning(dt, X_prune, Y_prune)
             post_pruning_score = dt.score(X_test, Y_test)
-            abalone_acc.append(testing_score)
-            abalone_acc_pruned.append(post_pruning_score)
-            
-            #evaluate pruning in Decision Tree with Wine
-            dt = DTC()
-            dt.fit(X_batch, Y_batch)
-            testing_score = dt.score(X_test, Y_test)
-        
-            dt = error_reduction_pruning(dt, X_prune, Y_prune)
-            post_pruning_score = dt.score(X_test, Y_test)
-            wine_acc.append(testing_score)
-            wine_acc_pruned.append(post_pruning_score)
+            acc.append(testing_score)
+            acc_pruned.append(post_pruning_score)
         
         #average scores
-        abalone_test_scores.append(np.mean(abalone_acc))
-        abalone_pruned_scores.append(np.mean(abalone_acc_pruned))
-        wine_test_scores.append(np.mean(wine_acc))
-        wine_pruned_scores.append(np.mean(wine_acc_pruned))
+        test_scores.append(np.mean(acc))
+        pruned_scores.append(np.mean(acc_pruned))
     
     plt.figure()
-    plt.plot(training_sizes, abalone_test_scores)
-    plt.plot(training_sizes, abalone_pruned_scores)
-    plt.figure()
-    plt.plot(training_sizes, wine_test_scores)
-    plt.plot(training_sizes, wine_pruned_scores)
-        
+    plt.plot(training_sizes, test_scores, label='Out-of-sample, Before Pruning')
+    plt.plot(training_sizes, pruned_scores, label='Out-of-sample, After Pruning')
+    plt.title(title)
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.xlabel('Training Size [%]')
+    
+    
+if __name__=="__main__":
+    #load data
+    X_abalone = pd.read_hdf('X_abalone.hdf')
+    X_abalone_scaled = scale(X_abalone)
+    Y_abalone = pd.read_hdf('y_abalone.hdf')
+    
+    X_wine = pd.read_hdf('X_wine.hdf')
+    X_wine_scaled = scale(X_wine)
+    Y_wine = pd.read_hdf('y_wine.hdf')
+    
+    X_diabetes = pd.read_hdf('X_diabetes.hdf')
+    X_diabetes_scaled = scale(X_diabetes)
+    Y_diabetes = pd.read_hdf('y_diabetes.hdf')
+    
+    X_titanic = pd.read_hdf('X_titanic.hdf')
+    y_titanic = pd.read_hdf('y_titanic.hdf')
+    
+    X_iris = pd.read_hdf('X_iris.hdf')
+    X_iris_scaled = scale(X_iris)
+    y_iris = pd.read_hdf('y_iris.hdf')
+
+    evaluate_pruner(X_abalone_scaled, Y_abalone, 'Abalone')    
+    evaluate_pruner(X_wine_scaled, Y_wine, 'Wine')    
+    evaluate_pruner(X_diabetes_scaled, Y_diabetes, 'Pima Indian Diabetes')    
+#    evaluate_pruner(X_titanic, y_titanic)    
+    evaluate_pruner(X_iris_scaled, y_iris, 'Iris')    
