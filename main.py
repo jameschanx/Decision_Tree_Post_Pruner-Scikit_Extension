@@ -98,24 +98,24 @@ def evaluate_pruner(X, y, title):
     
 if __name__=="__main__":
     #load data
-    X_abalone = pd.read_hdf('X_abalone.hdf')
+    X_abalone = pd.read_hdf('data/X_abalone.hdf')
     X_abalone_scaled = scale(X_abalone)
-    Y_abalone = pd.read_hdf('y_abalone.hdf')
+    Y_abalone = pd.read_hdf('data/y_abalone.hdf')
     
-    X_wine = pd.read_hdf('X_wine.hdf')
+    X_wine = pd.read_hdf('data/X_wine.hdf')
     X_wine_scaled = scale(X_wine)
-    Y_wine = pd.read_hdf('y_wine.hdf')
+    Y_wine = pd.read_hdf('data/y_wine.hdf')
     
-    X_diabetes = pd.read_hdf('X_diabetes.hdf')
+    X_diabetes = pd.read_hdf('data/X_diabetes.hdf')
     X_diabetes_scaled = scale(X_diabetes)
-    Y_diabetes = pd.read_hdf('y_diabetes.hdf')
+    Y_diabetes = pd.read_hdf('data/y_diabetes.hdf')
     
-    X_titanic = pd.read_hdf('X_titanic.hdf')
-    y_titanic = pd.read_hdf('y_titanic.hdf')
+    X_titanic = pd.read_hdf('data/X_titanic.hdf')
+    y_titanic = pd.read_hdf('data/y_titanic.hdf')
     
-    X_iris = pd.read_hdf('X_iris.hdf')
+    X_iris = pd.read_hdf('data/X_iris.hdf')
     X_iris_scaled = scale(X_iris)
-    y_iris = pd.read_hdf('y_iris.hdf')
+    y_iris = pd.read_hdf('data/y_iris.hdf')
 
     evaluate_pruner(X_abalone_scaled, Y_abalone, 'Abalone')    
     evaluate_pruner(X_wine_scaled, Y_wine, 'Wine')    
