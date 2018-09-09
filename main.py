@@ -74,7 +74,6 @@ def evaluate_pruner(X, y, title):
             X_batch = X_train[:int(ts/100 * X_train.shape[0])]
             Y_batch = Y_train[:int(ts/100 * Y_train.shape[0])]    
         
-            #evaluate pruning in Decision Tree with Abalone
             dt = DTC()
             dt.fit(X_batch, Y_batch)
             testing_score = dt.score(X_test, Y_test)
